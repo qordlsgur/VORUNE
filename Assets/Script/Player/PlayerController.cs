@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class PlayerController : MonoBehaviour
 {
@@ -40,6 +41,18 @@ public class PlayerController : MonoBehaviour
         playerMovement.SetMoveInput(x, z);
         playerAnimation.UpdateDirection(x, z);
         playerAnimation.UpdateMovementAnimation(playerMovement.currentSpeed);
+
+        if(playerInput.backStep)
+        {
+            playerMovement.SetBackStep();
+            playerInput.backStep = false;
+        }
+
+        if(playerInput.dashStep)
+        {
+            playerMovement.SetStep();
+            playerInput.dashStep = false;
+        }
 
         if(playerInput.jumpPressed)
         {

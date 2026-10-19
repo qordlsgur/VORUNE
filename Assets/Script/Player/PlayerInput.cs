@@ -8,16 +8,18 @@ public class PlayerInput : MonoBehaviour
     public bool sprintHeld;
     public bool jumpPressed;
 
+    public bool backStep;
+    public bool dashStep;
+
     void Update()
     {
+        ReadMovementInput();
         Dash();
         Jump();
-        ReadMovementInput();
         ReadCombatInput();
         ReadDodgeInput();
     }
 
-    // 움직임
     private void ReadMovementInput()
     {
         moveX = Input.GetAxisRaw("Horizontal");
@@ -26,6 +28,18 @@ public class PlayerInput : MonoBehaviour
 
     private void Dash()
     {
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            if (moveX == 0 && moveZ == 0)
+            {
+                backStep = true;
+            }
+            else
+            {
+                dashStep = true;
+            }
+        }
+
         sprintHeld = Input.GetKey(KeyCode.LeftShift);
     }
 
@@ -35,13 +49,11 @@ public class PlayerInput : MonoBehaviour
             jumpPressed = true;
     }
 
-    // 전투
     private void ReadCombatInput()
     {
 
     }
 
-    // 
     private void ReadDodgeInput()
     {
 

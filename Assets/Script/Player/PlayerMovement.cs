@@ -20,9 +20,21 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private float jumpSpeed;
 
+
+    private Vector3 backStepDirection;
+    private float backStepTimer;
+
+    [SerializeField]
+    private float backStepDuration;
+    [SerializeField]
+    private float backStepDistance;
+
     private bool isDashing;
     private bool isJumping;
     private bool isGrounded;
+
+    public bool isStepDash;
+    public bool isBackStep;
 
     public float currentSpeed;
 
@@ -50,6 +62,18 @@ public class PlayerMovement : MonoBehaviour
         else
             Decelerate();
 
+        if (isBackStep)
+        {
+            backStep();
+            return;
+        }
+
+        if (isStepDash)
+        {
+            isStepDash = false;
+            Step();
+        }
+
         Move(x, z);
 
         if (isJumping)
@@ -58,21 +82,15 @@ public class PlayerMovement : MonoBehaviour
             Jump();
         }
     }
-
-    public void SetDash(bool dash)
-    {
-        isDashing = dash;
-    }
-
-    public void SetJump()
-    {
-        isJumping = true;
-    }
-
     public void SetMoveInput(float x, float z)
     {
         this.x = x;
         this.z = z;
+    }
+
+    public void SetDash(bool dash)
+    {
+        isDashing = dash;
     }
 
     private void Move(float x, float z)
@@ -84,6 +102,46 @@ public class PlayerMovement : MonoBehaviour
 
         rb.MovePosition(
             rb.position + Direction * currentSpeed * Time.fixedDeltaTime);
+    }
+
+    public void SetStep()
+    {
+        isStepDash = true;
+    }
+
+    private void Step()
+    {
+
+    }
+
+    public void SetBackStep()
+    {
+        if (isBackStep)
+            return;
+
+        isBackStep = true;
+        backStepDirection = -transform.forward;
+        backStepTimer = 0;
+    }
+
+    private void backStep()
+    {
+        backStepTimer += Time.fixedDeltaTime;
+
+        rb.MovePosition(
+            rb.position + backStepDirection *
+            (backStepDistance / backStepDuration) * Time.fixedDeltaTime
+        );
+
+        if (backStepTimer >= backStepDuration)
+        {
+            isBackStep = false;
+        }
+    }
+
+    public void SetJump()
+    {
+        isJumping = true;
     }
 
     private void Jump()

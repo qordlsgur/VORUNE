@@ -22,12 +22,20 @@ public class PlayerMovement : MonoBehaviour
 
 
     private Vector3 backStepDirection;
-    private float backStepTimer;
+    private float StepTimer;
 
     [SerializeField]
-    private float backStepDuration;
+    private float stepDistance;
+    [SerializeField]
+    private float stepDuration;
+    [SerializeField]
+    private float sideStepDistance;
+    [SerializeField]
+    private float sideStepDuration;
     [SerializeField]
     private float backStepDistance;
+    [SerializeField]
+    private float backStepDuration;
 
     private bool isDashing;
     private bool isJumping;
@@ -70,11 +78,12 @@ public class PlayerMovement : MonoBehaviour
 
         if (isStepDash)
         {
-            isStepDash = false;
             Step();
+            return;
         }
 
-        Move(x, z);
+        if (!isStepDash)
+            Move(x, z);
 
         if (isJumping)
         {
@@ -102,16 +111,29 @@ public class PlayerMovement : MonoBehaviour
 
         rb.MovePosition(
             rb.position + Direction * currentSpeed * Time.fixedDeltaTime);
+
     }
 
     public void SetStep()
     {
+        if (isStepDash)
+            return;
+
         isStepDash = true;
+        backStepDirection = -transform.forward;
+        StepTimer = 0;
     }
 
     private void Step()
     {
+        StepTimer += Time.fixedDeltaTime;
 
+        rb.MovePosition(
+            rb.position + transform.forward *
+            (stepDistance / stepDuration) * Time.fixedDeltaTime);
+
+        if (StepTimer >= stepDuration)
+            isStepDash = false;
     }
 
     public void SetBackStep()
@@ -121,19 +143,19 @@ public class PlayerMovement : MonoBehaviour
 
         isBackStep = true;
         backStepDirection = -transform.forward;
-        backStepTimer = 0;
+        StepTimer = 0;
     }
 
     private void backStep()
     {
-        backStepTimer += Time.fixedDeltaTime;
+        StepTimer += Time.fixedDeltaTime;
 
         rb.MovePosition(
             rb.position + backStepDirection *
             (backStepDistance / backStepDuration) * Time.fixedDeltaTime
         );
 
-        if (backStepTimer >= backStepDuration)
+        if (StepTimer >= backStepDuration)
         {
             isBackStep = false;
         }

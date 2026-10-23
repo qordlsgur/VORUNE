@@ -17,7 +17,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float z;
 
-    int a;
     private void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
